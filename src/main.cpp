@@ -45,7 +45,17 @@ void checkWaterHeight() {
     digitalWrite(POWER_PIN, LOW);
 }
 
+float checkTemperature() {
+    int sensorValue = analogRead(A0);
+    float voltage = sensorValue * (5.0 / 1023.0);
+    float temperature = voltage - 0.5;
+    temperature = temperature / 0.01;
+
+    return temperature - 10;
+}
+
 void loop() {
     checkLocation();
     checkWaterHeight();
+    Serial.println(checkTemperature());
 }
