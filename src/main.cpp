@@ -1,11 +1,9 @@
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
 #include "Arduino.h"
-#include <OneWire.h>
-#include <DallasTemperature.h>
 
 
-const int GPSReceivePin = 4, GPSTransmitPin = 2;
+const int GPSReceivePin = 4, GPSTransmitPin = 2, WaterLevelSensor = A5, POWER_PIN = 7;
 
 const uint32_t GPSBaud = 9600; //Default baud of NEO-6M is 9600
 
@@ -16,6 +14,8 @@ SoftwareSerial gpsSerial(GPSReceivePin, GPSTransmitPin);
 void setup() {
     Serial.begin(9600);
     gpsSerial.begin(GPSBaud);
+    pinMode(POWER_PIN, OUTPUT);
+    digitalWrite(POWER_PIN, LOW);
 }
 
 void checkLocation() {
@@ -35,6 +35,17 @@ void checkLocation() {
     }
 }
 
+void checkWaterHeight() {
+    int waterLevel = analogRead(WaterLevelSensor); // read the analog waterLevel from sensor
+    digitalWrite(POWER_PIN, HIGH);
+    delay(50);
+    Serial.print("Water level: ");
+    Serial.print(waterLevel);
+    Serial.println("mm");
+    digitalWrite(POWER_PIN, LOW);
+}
+
 void loop() {
     checkLocation();
+    checkWaterHeight();
 }
